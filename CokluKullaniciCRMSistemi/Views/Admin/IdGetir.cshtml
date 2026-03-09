@@ -1,0 +1,154 @@
+﻿@model CokluKullaniciCRMSistemi.Models.ProfilGuncelleVM
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Kullanıcı Bilgilerini Güncelle</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script>
+
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+    <div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+        <div class="layout-container flex h-full grow flex-col">
+            <div class="px-4 md:px-10 lg:px-20 flex flex-1 justify-center py-10">
+                <div class="layout-content-container flex flex-col w-full max-w-4xl flex-1">
+                    <div class="flex flex-col gap-6">
+                        <div class="flex flex-wrap justify-between gap-3 p-4">
+                            <div class="flex flex-col gap-3">
+                                <p class="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Kullanıcı Bilgilerini Güncelle</p>
+                                <p class="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal">Kullanıcının kişisel bilgilerini ve rolünü güncelleyin.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-background-dark rounded-lg p-6 md:p-8 shadow-sm">
+
+                            @using (Html.BeginForm("Guncelle", "Admin", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <form class="flex flex-col gap-6">
+                                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Kişisel Bilgiler</h3>
+                                    <br />
+                                    <div class="grid grid-cols-1 gap-6">
+                                        <label class="flex flex-col flex-1">
+                                            @Html.HiddenFor(m => m.UserId)
+                                            @Html.LabelFor(m => m.FullName, "Ad Soyad", new { @class = "text-gray-900 dark:text-white text-base font-medium leading-normal pb-2" })
+                                            @Html.TextBoxFor(m => m.FullName, new { @class = "form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 h-14 placeholder:text-gray-500 dark:placeholder-gray-400 p-4 text-base font-normal leading-normal" })
+                                            @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-red-500" })
+                                        </label>
+                                    </div>
+                                    <br />
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <label class="flex flex-col flex-1">
+                                            @Html.LabelFor(m => m.Username, "Kullanıcı Adı", new { @class = "text-gray-900 dark:text-white text-base font-medium leading-normal pb-2" })
+                                            @Html.TextBoxFor(m => m.Username, new { @class = "form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 h-14 placeholder:text-gray-500 dark:placeholder-gray-400 p-4 text-base font-normal leading-normal" })
+                                            @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-red-500" })
+                                        </label>
+                                        <label class="flex flex-col flex-1">
+                                            @Html.LabelFor(m => m.Email, "E-Mail", new { @class = "text-gray-900 dark:text-white text-base font-medium leading-normal pb-2" })
+                                            @Html.TextBoxFor(m => m.Email, new { @class = "form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 h-14 placeholder:text-gray-500 dark:placeholder-gray-400 p-4 text-base font-normal leading-normal" })
+                                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-red-500" })
+                                        </label>
+                                    </div>
+                                    <br />
+                                    <label class="flex flex-col">
+                                        <div class="flex flex-col gap-6">
+                                            <label class="flex flex-col">
+                                                @Html.LabelFor(m => m.MevcutSifre, "Mevcut Şifre", new { @class = "text-gray-900 dark:text-white text-base font-medium leading-normal pb-2" })
+                                                <div class="relative">
+                                                    @Html.PasswordFor(m => m.MevcutSifre, new { @class = "form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 h-14 placeholder:text-gray-500 dark:placeholder-gray-400 p-4 text-base font-normal leading-normal pr-12", @placeholder = "Mevcut şifrenizi girin", id = "currentPasswordInput" })
+                                                    @Html.ValidationMessageFor(model => model.MevcutSifre, "", new { @class = "text-red-500" })
+                                                    @*<button id="toggleCurrentPassword" class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 dark:text-gray-400" type="button">
+                                                            <span class="material-symbols-outlined">visibility_off</span>
+                                                        </button>*@
+                                                </div>
+                                            </label>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <label class="flex flex-col">
+                                                    @Html.LabelFor(m => m.YeniSifre, "Yeni Şifre", new { @class = "text-gray-900 dark:text-white text-base font-medium leading-normal pb-2" })
+                                                    <div class="relative">
+                                                        @Html.PasswordFor(m => m.YeniSifre, new { @class = "form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 h-14 placeholder:text-gray-500 dark:placeholder-gray-400 p-4 text-base font-normal leading-normal pr-12", @placeholder = "Yeni şifrenizi girin", id = "newPasswordInput" })
+
+                                                        @*<button id="toggleNewPassword" class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 dark:text-gray-400" type="button">
+                                                                <span class="material-symbols-outlined">visibility_off</span>
+                                                            </button>*@
+                                                    </div>
+                                                </label>
+                                                <label class="flex flex-col">
+                                                    @Html.LabelFor(m => m.YeniSifreTekrari, "Yeni Şifre Tekrarı", new { @class = "text-gray-900 dark:text-white text-base font-medium leading-normal pb-2" })
+                                                    <div class="relative">
+                                                        @Html.PasswordFor(m => m.YeniSifreTekrari, new { @class = "form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 h-14 placeholder:text-gray-500 dark:placeholder-gray-400 p-4 text-base font-normal leading-normal pr-12", @placeholder = "Yeni şifrenizin tekrarını girin", id = "confirmPasswordInput" })
+                                                        @Html.ValidationMessageFor(model => model.YeniSifreTekrari, "",
+                                                       new { @class = "text-red-500" })
+                                                        @*<button id="toggleConfirmPassword" class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 dark:text-gray-400" type="button">
+                                                                <span class="material-symbols-outlined">visibility_off</span>
+                                                            </button>*@
+                                                    </div>
+                                                </label>
+                                            </div>
+
+
+
+                                            <div class="flex flex-col gap-3">
+                                                <p class="text-[#0d141b] dark:text-white text-base font-medium leading-normal">Rol</p>
+                                                <div class="flex items-center gap-6">
+                                                    <div class="flex items-center gap-3">
+                                                        @Html.RadioButtonFor(m => m.IsOwner, true, new { id = "isOwnerYes" })
+                                                        <label for="isOwnerYes">Admin</label>
+                                                    </div>
+                                                    <div class="flex items-center gap-3">
+                                                        @Html.RadioButtonFor(m => m.IsOwner, false, new { id = "isOwnerNo" })
+                                                        <label for="isOwnerNo">User</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </label>
+                                    <div class="flex justify-end pt-4">
+                                        <button class="flex h-12 items-center justify-center rounded-lg bg-primary px-8 text-base font-bold text-white shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" type="submit" id="btnUpdate">
+                                            Güncelle
+                                        </button>
+                                    </div>
+                                </form>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

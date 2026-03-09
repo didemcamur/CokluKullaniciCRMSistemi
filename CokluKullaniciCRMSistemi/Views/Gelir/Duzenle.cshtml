@@ -1,0 +1,84 @@
+﻿@model CokluKullaniciCRMSistemi.Models.Entity.Incomes
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html class="light" lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Gelir Düzenle - Kurumsal CRM</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#007fff",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#0f1923"
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#101418] dark:text-white">
+
+    <!-- Ortalanmış Form -->
+    <div class="flex flex-1 items-center justify-center p-8">
+        <div class="bg-white dark:bg-[#1a2632] border border-[#dae0e7] dark:border-[#2c3a47] rounded-xl p-8 w-full max-w-lg shadow-lg">
+            <h2 class="text-2xl font-semibold mb-6 text-center">Gelir Bilgilerini Güncelle</h2>
+
+            @using (Html.BeginForm("Duzenle", "Gelir", FormMethod.Post))
+            {
+                @Html.HiddenFor(m => m.IncomeId)
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-1">Müşteri / Kaynak</label>
+                    @Html.TextBoxFor(m => m.Source, new { @class = "w-full rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-[#243343] text-gray-800 dark:text-gray-200 focus:ring-primary focus:border-primary px-3 py-2" })
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-1">Tutar (₺)</label>
+                    @Html.TextBoxFor(m => m.Amount, new { @class = "w-full rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-[#243343] text-gray-800 dark:text-gray-200 focus:ring-primary focus:border-primary px-3 py-2" })
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-1">Tarih</label>
+                    @Html.TextBoxFor(m => m.Date, "{0:yyyy-MM-dd}", new { type = "date", @class = "w-full rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-[#243343] text-gray-800 dark:text-gray-200 focus:ring-primary focus:border-primary px-3 py-2" })
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium mb-1" readonly>Kullanıcı ID</label>
+                    @Html.TextBoxFor(m => m.UserId, new { @class = "w-full rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-[#243343] text-gray-800 dark:text-gray-200 focus:ring-primary focus:border-primary px-3 py-2", @readonly = "readonly" })
+
+                </div>
+
+
+
+                <div class="flex justify-center gap-3">
+                    <button type="button"
+                            onclick="window.history.back()"
+                            class="px-5 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200
+                        font-medium hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-base">arrow_back</span>
+                        Geri Dön
+                    </button>
+
+                    <a href="/Gelir/Index" class="px-5 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium hover:bg-gray-300 dark:hover:bg-gray-600">İptal</a>
+                    <button type="submit" class="px-5 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary/90">Kaydet</button>
+                </div>
+            }
+        </div>
+    </div>
+    </div>
+</body>
+</html>
+

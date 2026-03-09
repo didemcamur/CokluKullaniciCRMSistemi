@@ -1,0 +1,268 @@
+﻿@using CokluKullaniciCRMSistemi.Models.Entity
+@using PagedList;
+@using PagedList.Mvc;
+@model PagedList.IPagedList<Users>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html class="light" lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Kullanıcı Yönetimi - CRM</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#007fff",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#0f1923",
+                        "text-light": "#495057",
+                        "text-dark": "#e0e0e0",
+                        "heading-light": "#212529",
+                        "heading-dark": "#ffffff",
+                        "success": "#28a745",
+                        "warning": "#ffc107",
+                        "danger": "#dc3545",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }</script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+        }
+
+        /* PagedList Pagination Styles */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .pagination li {
+                display: inline-block;
+            }
+
+                .pagination li a,
+                .pagination li span {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    min-width: 2.25rem;
+                    height: 2.25rem;
+                    padding: 0 0.5rem;
+                    border-radius: 0.5rem;
+                    font-size: 0.875rem;
+                    font-weight: 500;
+                    text-decoration: none;
+                    transition: all 0.2s;
+                }
+
+                /* Normal page numbers */
+                .pagination li a {
+                    color: #495057;
+                    background-color: transparent;
+                }
+
+                    .pagination li a:hover {
+                        background-color: #e9ecef;
+                    }
+
+                /* Active page */
+                .pagination li.active span {
+                    background-color: #007fff;
+                    color: white;
+                    font-weight: 700;
+                }
+
+                /* Disabled (current page as span) */
+                .pagination li.disabled span {
+                    color: #6c757d;
+                    cursor: not-allowed;
+                    opacity: 0.6;
+                }
+
+        /* Dark mode support */
+        .dark .pagination li a {
+            color: #e0e0e0;
+        }
+
+            .dark .pagination li a:hover {
+                background-color: #374151;
+            }
+
+        .dark .pagination li.disabled span {
+            color: #9ca3af;
+        }
+
+        /* Previous/Next buttons */
+        .pagination li.PagedList-skipToPrevious a,
+        .pagination li.PagedList-skipToNext a {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+    <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+        <div class="flex h-full grow flex-row">
+            <!-- SideNavBar -->
+            <div class="flex flex-col h-full bg-white dark:bg-background-dark border-r border-gray-200 dark:border-gray-700 w-64 p-4 justify-between">
+                <div class="flex flex-col gap-8">
+                    <div class="flex items-center gap-3 px-2">
+                        <span class="material-symbols-outlined text-primary text-3xl">donut_large</span>
+                        <h1 class="text-heading-light dark:text-heading-dark text-xl font-bold">ASP NET MVC CRM</h1>
+                    </div>
+                    <div class="flex flex-col gap-2">                      
+                        <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary dark:bg-primary/20" href="#">
+                            <span class="material-symbols-outlined">group</span>
+                            <p class="text-sm font-medium">Kullanıcılar</p>
+                        </a>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-3 p-2 border-t border-gray-200 dark:border-gray-700 pt-4">
+                        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Admin user avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCUQ0jmhBBEfXbAoegG7SK-8xl94Rdl1IR9ZaOvLBppGfCY4VVNRRU1X5hx-IG6Lf6HSgzVWCZul7r41QC2s3VvgKLZ6riEtWMuJXQV2w7fzrD4nAUw2T0dcoa1OcBG1IdGEO-zPknCl30wwicLMriCm7G4y0G5GJVYNr7y1cn5O65lNuWAqcqVqcQT4zUdri56VkGFgGLabelQP92XKRKw7WiETsmzOctRANrn9MYMT8TIb7IFwG6gJ_XMLhJKEk9OtH9VnhsAXopS");'></div>
+                        <div class="flex flex-col">
+                            <h1 class="text-heading-light dark:text-heading-dark text-sm font-semibold">@Session["KullaniciAdSoyad"]</h1>
+                            <p class="text-text-light dark:text-text-dark text-xs">@Session["KullaniciEmail"]</p>
+                        </div>
+                    </div>
+                    <a href="/Admin/Cikis">
+                        <button class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg h-10 px-4 bg-gray-100 dark:bg-gray-800 text-text-light dark:text-text-dark hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-medium">
+                            <span class="material-symbols-outlined">logout</span>
+                            <span class="truncate">Çıkış Yap</span>
+                        </button>
+
+                    </a>
+
+                </div>
+            </div>
+            <!-- Main Content -->
+            <main class="flex-1 bg-background-light dark:bg-background-dark p-8">
+                <div class="max-w-7xl mx-auto">
+                    <!-- PageHeading -->
+                    <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+                        <p class="text-heading-light dark:text-heading-dark text-3xl font-bold tracking-tight">Kullanıcı Yönetimi</p>
+                        <a href="/Admin/AddUser">
+                            <button class="flex min-w-[84px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold shadow-sm hover:bg-primary/90">
+                                <span class="material-symbols-outlined">add</span>
+                                <span class="truncate">Yeni Kullanıcı Ekle</span>
+                            </button>
+                        </a>
+                     
+                    </div>
+                    <!-- SearchBar -->
+                    @using (Html.BeginForm("Index", "Admin", FormMethod.Get))
+                    {
+                        <div class="mb-6">
+                            <label class="flex flex-col min-w-40 h-12 w-full">
+                                <div class="flex w-full flex-1 items-stretch rounded-lg h-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus-within:ring-2 focus-within:ring-primary">
+                                    <div class="text-text-light dark:text-text-dark flex items-center justify-center pl-4">
+                                        <button type="submit" class="material-symbols-outlined p-0 m-0 border-none bg-transparent text-text-light dark:text-text-dark">search</button>
+                                    </div>
+                                    <input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-heading-light dark:text-heading-dark focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-text-light dark:placeholder:text-text-dark px-4 pl-2 text-base"
+                                           type="text"
+                                           name="p"
+                                           placeholder="Kullanıcı ara (isim, e-posta veya ID...)"
+                                           value="@ViewBag.arama" />
+                                </div>
+                            </label>
+                        </div>
+                    }
+                    <!-- Table -->
+                    <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50 dark:bg-gray-900/50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-text-light dark:text-text-dark uppercase tracking-wider">Ad Soyad</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-text-light dark:text-text-dark uppercase tracking-wider">E-posta</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-text-light dark:text-text-dark uppercase tracking-wider">Kullanıcı Adı</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-text-light dark:text-text-dark uppercase tracking-wider">Rol</th>
+                                        @*<th class="px-6 py-3 text-left text-xs font-medium text-text-light dark:text-text-dark uppercase tracking-wider">Durum</th>*@
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-light dark:text-text-dark uppercase tracking-wider">İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-900/50">
+                                            <input type="hidden" , name="UserId" , value="@item.UserId" />
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-heading-light dark:text-heading-dark">@item.FullName</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-light dark:text-text-dark">@item.Email</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-light dark:text-text-dark">@item.Username</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-light dark:text-text-dark">@(item.IsOwner?"Yönetici":"Kullanıcı")</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                @*<td class="px-6 py-4 whitespace-nowrap">
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-success/10 text-success">Aktif</span>
+                                                    </td>*@
+
+                                                <a class="text-primary hover:text-primary/80 p-1"
+                                                   href="@Url.Action("IdGetir","Admin", new {id=item.UserId })"
+                                                   title="Düzenle">
+                                                    <span class="material-symbols-outlined text-base">edit</span>
+                                                </a>
+                                                <a class="text-danger hover:text-danger/80 p-1"
+                                                   href="@Url.Action("Sil", "Admin", new {id=item.UserId})"
+                                                   onclick="return confirm('Kullanıcıyı silmek İstiyor musunuz?')"
+                                                   title="Sil">
+                                                    <span class="ml-2 material-symbols-outlined text-base">delete</span>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                    <!-- Pagination -->
+                    <div class="flex items-center justify-center mt-6">
+
+                        @*<nav class="flex items-center space-x-1">
+                                <a class="flex size-9 items-center justify-center rounded-lg text-text-light dark:text-text-dark hover:bg-gray-200 dark:hover:bg-gray-700" href="#">
+                                    <span class="material-symbols-outlined text-lg">chevron_left</span>
+                                </a>
+                                <a class="flex size-9 items-center justify-center rounded-lg text-sm font-bold text-white bg-primary" href="#">1</a>
+                                <a class="flex size-9 items-center justify-center rounded-lg text-sm text-text-light dark:text-text-dark hover:bg-gray-200 dark:hover:bg-gray-700" href="#">2</a>
+                                <a class="flex size-9 items-center justify-center rounded-lg text-sm text-text-light dark:text-text-dark hover:bg-gray-200 dark:hover:bg-gray-700" href="#">3</a>
+                                <span class="flex size-9 items-center justify-center text-sm text-text-light dark:text-text-dark">...</span>
+                                <a class="flex size-9 items-center justify-center rounded-lg text-sm text-text-light dark:text-text-dark hover:bg-gray-200 dark:hover:bg-gray-700" href="#">10</a>
+                                <a class="flex size-9 items-center justify-center rounded-lg text-text-light dark:text-text-dark hover:bg-gray-200 dark:hover:bg-gray-700" href="#">
+                                    <span class="material-symbols-outlined text-lg">chevron_right</span>
+                                </a>
+                            </nav>*@
+
+
+                        @Html.PagedListPager((IPagedList)Model, sayfa => Url.Action("Index", new { sayfa, p = ViewBag.arama }))
+                        @*@Html.PagedListPager((IPagedList)Model, sayfa => Url.Action("Index", new { sayfa }))*@
+
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

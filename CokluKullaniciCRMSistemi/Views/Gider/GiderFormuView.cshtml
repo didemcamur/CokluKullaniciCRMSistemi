@@ -1,0 +1,71 @@
+﻿@model CokluKullaniciCRMSistemi.Models.Entity.Expenses
+
+@{
+    ViewBag.Title = Model == null || Model.ExpenseId == 0 ? "Yeni Gider Ekle" : "Gider Düzenle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="flex flex-col flex-1 p-8 max-w-3xl mx-auto">
+
+    <h1 class="text-4xl font-black text-text-light dark:text-text-dark mb-6">
+        @ViewBag.Title
+    </h1>
+
+    @using (Html.BeginForm("Kaydet", "Gider", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="space-y-6">
+
+            @* Hataları göster *@
+            @if (!ViewData.ModelState.IsValid)
+            {
+                @Html.ValidationSummary(false, "Lütfen aşağıdaki hataları düzeltin:", new { @class = "text-red-700 bg-red-100 p-4 rounded-lg border border-red-300" })
+            }
+
+            @Html.HiddenFor(m => m.ExpenseId)
+            @Html.HiddenFor(m => m.UserId)
+
+            @* KATEGORİ ALANI *@
+            <div>
+                <label for="Category" class="block text-sm font-medium text-text-light dark:text-text-dark mb-2">Kategori</label>
+                @Html.TextBoxFor(m => m.Category, new { @class = "form-input w-full rounded-lg h-12 px-4 text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800", placeholder = "Örn: Ofis Malzemeleri" })
+                @Html.ValidationMessageFor(m => m.Category, "", new { @class = "text-red-500 text-sm mt-1" })
+            </div>
+
+            @* AÇIKLAMA ALANI *@
+            <div>
+                <label for="Description" class="block text-sm font-medium text-text-light dark:text-text-dark mb-2">Açıklama</label>
+                @Html.TextAreaFor(m => m.Description, new { @class = "form-input w-full rounded-lg px-4 py-3 text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800", placeholder = "Örn: A4 Kağıt ve Kalem Alımı", rows = 3 })
+                @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-red-500 text-sm mt-1" })
+            </div>
+
+            @* TUTAR VE TARİH ALANLARI *@
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="Amount" class="block text-sm font-medium text-text-light dark:text-text-dark mb-2">Tutar (TL)</label>
+                    @Html.TextBoxFor(m => m.Amount, "{0:0.00}", new { type = "text", inputmode = "decimal", @class = "form-input w-full rounded-lg h-12 px-4 text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800", placeholder = "0,00" })
+                    @Html.ValidationMessageFor(m => m.Amount, "", new { @class = "text-red-500 text-sm mt-1" })
+                </div>
+                <div>
+                    <label for="Date" class="block text-sm font-medium text-text-light dark:text-text-dark mb-2">Tarih</label>
+                    @Html.TextBoxFor(m => m.Date, "{0:yyyy-MM-dd}", new { type = "date", @class = "form-input w-full rounded-lg h-12 px-4 text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800" })
+                    @Html.ValidationMessageFor(m => m.Date, "", new { @class = "text-red-500 text-sm mt-1" })
+                </div>
+            </div>
+
+            @* KAYDET VE İPTAL BUTONLARI *@
+            <div class="flex items-center justify-end gap-4 pt-4">
+                <a href="@Url.Action("Index", "Gider")" class="px-6 py-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-text-light dark:text-text-dark font-bold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                    İptal
+                </a>
+                <button type="submit" class="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-bold hover:bg-primary/90 transition-colors">
+                    <span class="material-symbols-outlined">save</span>
+                    <span>Kaydet</span>
+                </button>
+            </div>
+
+        </div>
+    }
+</div>
+

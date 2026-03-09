@@ -1,0 +1,137 @@
+﻿@model IEnumerable<CokluKullaniciCRMSistemi.Models.Entity.Notes>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Notlar Yönetimi";
+}
+
+<!-- Sayfa Başlığı -->
+<div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+    <div>
+        <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">Notlar Yönetimi</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Tüm notlarınızı buradan yönetebilirsiniz</p>
+    </div>
+    <button onclick="window.location.href='/Notlar/Create'"
+            class="flex items-center justify-center rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold shadow-sm hover:bg-primary/90 transition-colors">
+        <span class="material-symbols-outlined mr-2">add</span>
+        <span class="truncate">Yeni Not Ekle</span>
+    </button>
+</div>
+
+<!-- Arama Alanı -->
+<div class="mb-6">
+    <label class="flex flex-col min-w-40 w-full">
+        <div class="flex w-full flex-1 items-stretch rounded-lg h-12">
+            <div class="text-gray-500 flex bg-white dark:bg-gray-800 items-center justify-center pl-4 rounded-l-lg border border-gray-200 dark:border-gray-700 border-r-0">
+                <span class="material-symbols-outlined">search</span>
+            </div>
+            <input id="searchInput"
+                   class="form-input flex w-full rounded-r-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 h-full placeholder:text-gray-500 px-4 text-base font-normal"
+                   placeholder="Notlarda ara (başlık, içerik, yazar...)" onkeyup="searchNotes()" />
+        </div>
+    </label>
+</div>
+
+<!-- İstatistik Kartları -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+        <div class="flex items-center gap-3">
+            <div class="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                <span class="material-symbols-outlined text-blue-600 dark:text-blue-400">description</span>
+            </div>
+            <div>
+                <p class="text-2xl font-bold text-text-light dark:text-text-dark">@Model.Count()</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Toplam Not</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+        <div class="flex items-center gap-3">
+            <div class="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                <span class="material-symbols-outlined text-green-600 dark:text-green-400">today</span>
+            </div>
+            <div>
+                <p class="text-2xl font-bold text-text-light dark:text-text-dark">@Model.Count(n => n.CreatedDate.Date == DateTime.Today)</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Bugün Eklenen</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+        <div class="flex items-center gap-3">
+            <div class="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                <span class="material-symbols-outlined text-purple-600 dark:text-purple-400">link</span>
+            </div>
+            <div>
+                <p class="text-2xl font-bold text-text-light dark:text-text-dark">@Model.Count(n => n.TaskId != null)</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Göreve Bağlı</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Not Kartları -->
+@if (Model.Any())
+{
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="notesContainer">
+        @foreach (var note in Model)
+        {
+            <div class="note-card bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 hover:shadow-lg transition-all"
+                 data-note-title="@note.Title.ToLower()"
+                 data-note-content="@note.Content?.ToLower()"
+                 data-note-user="@note.Users.FullName.ToLower()">
+
+                <div class="flex items-start justify-between mb-3">
+                    <div>
+                        <h3 class="text-lg font-bold">@note.Title</h3>
+                        <p class="text-xs text-gray-500">@note.CreatedDate.ToString("dd MMM yyyy, HH:mm")</p>
+                    </div>
+                    @if (note.TaskId != null)
+                    {
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            <span class="material-symbols-outlined text-xs mr-1" style="font-size: 14px;">link</span>
+                            Görev
+                        </span>
+                    }
+                </div>
+
+                <p class="text-sm text-gray-600 mb-3 line-clamp-3">@note.Content</p>
+
+                <div class="flex items-center justify-between pt-3 border-t border-gray-200">
+                    <div class="flex items-center gap-2">
+                        <div class="bg-gradient-to-br from-blue-500 to-purple-600 rounded-full size-6 flex items-center justify-center text-white text-xs font-bold">
+                            @note.Users.FullName.Substring(0, 1).ToUpper()
+                        </div>
+                        <span class="text-xs text-gray-500">@note.Users.FullName</span>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <a href="/Notlar/Edit/@note.NoteId" class="text-blue-600 hover:underline text-sm">Düzenle</a>
+                        <form method="post" action="/Notlar/Delete/@note.NoteId" onsubmit="return confirm('Silmek istediğinize emin misiniz?');">
+                            <button type="submit" class="text-red-600 hover:underline text-sm">Sil</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="text-center py-16 text-gray-500">
+        <p>Henüz not eklenmemiş. İlk notunuzu oluşturun.</p>
+    </div>
+}
+
+<script>
+    function searchNotes() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const noteCards = document.querySelectorAll('.note-card');
+        noteCards.forEach(card => {
+            const title = card.getAttribute('data-note-title') || '';
+            const content = card.getAttribute('data-note-content') || '';
+            const user = card.getAttribute('data-note-user') || '';
+            card.style.display = (title.includes(searchTerm) || content.includes(searchTerm) || user.includes(searchTerm)) ? 'block' : 'none';
+        });
+    }
+</script>

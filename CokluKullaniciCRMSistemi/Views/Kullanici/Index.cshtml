@@ -1,0 +1,74 @@
+﻿@model CokluKullaniciCRMSistemi.Controllers.KullaniciController.KullaniciDashboardViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Kullanıcı Anasayfa";
+}
+
+<h1 class="text-2xl font-bold mb-6 text-gray-800">Kullanıcı Gösterge Paneli</h1>
+
+<!-- 3 bilgi kutusu -->
+<div class="grid grid-cols-3 gap-6 mb-6">
+    <div class="bg-white shadow rounded-lg p-4">
+        <h2 class="text-gray-600">Toplam Gelir</h2>
+        <p class="text-2xl font-semibold text-green-600">@Model.ToplamGelir ₺</p>
+    </div>
+
+    <div class="bg-white shadow rounded-lg p-4">
+        <h2 class="text-gray-600">Toplam Gider</h2>
+        <p class="text-2xl font-semibold text-red-600">@Model.ToplamGider ₺</p>
+    </div>
+
+    <div class="bg-white shadow rounded-lg p-4">
+        <h2 class="text-gray-600">Bakiye</h2>
+        <p class="text-2xl font-semibold text-blue-600">@Model.Bakiye ₺</p>
+    </div>
+</div>
+
+<!-- Son gelir ve gider tablosu -->
+<div class="grid grid-cols-2 gap-6">
+    <div class="bg-white shadow rounded-lg p-4">
+        <h2 class="text-lg font-bold mb-2 text-gray-700">Son 5 Gelir</h2>
+        <table class="w-full text-sm text-gray-600">
+            <thead>
+                <tr class="text-left border-b">
+                    <th class="py-2">Kaynak</th>
+                    <th class="py-2">Tutar</th>
+                    <th class="py-2">Tarih</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var gelir in Model.Gelirler)
+                {
+                    <tr class="border-b">
+                        <td class="py-2">@gelir.Source</td>
+                        <td class="py-2">@gelir.Amount ₺</td>
+                        <td class="py-2">@gelir.Date.ToShortDateString()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="bg-white shadow rounded-lg p-4">
+        <h2 class="text-lg font-bold mb-2 text-gray-700">Son 5 Gider</h2>
+        <table class="w-full text-sm text-gray-600">
+            <thead>
+                <tr class="text-left border-b">
+                    <th class="py-2">Kaynak</th>
+                    <th class="py-2">Tutar</th>
+                    <th class="py-2">Tarih</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var gider in Model.Giderler)
+                {
+                    <tr class="border-b">
+                        <td class="py-2">@gider.Description</td>
+                        <td class="py-2">@gider.Amount ₺</td>
+                        <td class="py-2">@gider.Date.ToShortDateString()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

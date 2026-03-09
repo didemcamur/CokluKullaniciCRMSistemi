@@ -1,0 +1,124 @@
+﻿@model List<CokluKullaniciCRMSistemi.Models.Entity.Expenses>
+
+@{
+    ViewBag.Title = "Gider Yönetimi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages = ViewBag.TotalPages;
+    string currentFiltre = ViewBag.CurrentFiltre;
+}
+
+<div class="flex flex-col flex-1 p-8 max-w-7xl mx-auto">
+
+    <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+        <h1 class="text-4xl font-black text-text-light dark:text-text-dark">Gider Yönetimi</h1>
+        <a href="@Url.Action("YeniGiderEkle", "Gider")"
+           class="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-bold text-sm hover:bg-primary/90 transition-colors shadow-md">
+            <span class="material-symbols-outlined">add_circle</span>
+            <span>Yeni Gider Ekle</span>
+        </a>
+    </div>
+
+    @* --- Filtreleme Formu --- *@
+    <div class="mb-6">
+        @using (Html.BeginForm("Index", "Gider", FormMethod.Get))
+        {
+            <div class="flex gap-2">
+                <div class="flex flex-1">
+                    <div class="flex items-center justify-center px-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-l-lg text-text-secondary-light dark:text-text-secondary-dark">
+                        <span class="material-symbols-outlined">search</span>
+                    </div>
+                    <input type="text" name="filtre" value="@currentFiltre"
+                           placeholder="Kategoriye veya açıklamaya göre filtrele"
+                           class="form-input flex-1 rounded-r-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-text-light dark:text-text-dark px-4 focus:outline-0 focus:ring-2 focus:ring-primary/50" />
+                </div>
+                <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors">
+                    Ara
+                </button>
+            </div>
+            <input type="hidden" name="page" value="1" />
+        }
+    </div>
+
+    @* --- Gider Tablosu --- *@
+    <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+        <table class="w-full text-left">
+            <thead class="bg-gray-50 dark:bg-gray-900">
+                <tr>
+                    <th class="px-6 py-3 text-xs font-bold uppercase text-text-light dark:text-text-dark">Tarih</th>
+                    <th class="px-6 py-3 text-xs font-bold uppercase text-text-light dark:text-text-dark">Kategori</th>
+                    <th class="px-6 py-3 text-xs font-bold uppercase text-text-light dark:text-text-dark">Açıklama</th>
+                    <th class="px-6 py-3 text-xs font-bold uppercase text-text-light dark:text-text-dark">Tutar</th>
+                    <th class="px-6 py-3 text-xs font-bold uppercase text-text-light dark:text-text-dark">Fatura/Belge</th>
+                    <th class="px-6 py-3 text-xs font-bold uppercase text-text-light dark:text-text-dark text-center">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                @if (Model == null || !Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 text-center text-text-secondary-light dark:text-text-secondary-dark">
+                            Gösterilecek gider kaydı bulunamadı.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var gider in Model)
+                    {
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <td class="px-6 py-4 text-sm text-text-secondary-light dark:text-text-secondary-dark">@gider.Date.ToString("dd.MM.yyyy")</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary-light dark:text-text-secondary-dark">@gider.Category</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary-light dark:text-text-secondary-dark">@gider.Description</td>
+                            <td class="px-6 py-4 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">@gider.Amount.ToString("C")</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                                @* Fatura/Belge burada gösterilecek *@
+                            </td>
+                            <td class="px-6 py-4 text-center text-sm">
+                                <a href="@Url.Action("Duzenle", "Gider", new { id = gider.ExpenseId })"
+                                   class="text-primary p-2 hover:bg-primary/10 rounded-full transition-colors inline-block">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </a>
+                                <a href="@Url.Action("Sil", "Gider", new { id = gider.ExpenseId })"
+                                   class="text-red-500 p-2 hover:bg-red-500/10 rounded-full transition-colors inline-block"
+                                   onclick="return confirm('Bu kaydı silmek istediğinize emin misiniz?');">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @* --- Sayfalama --- *@
+    @if (totalPages > 1)
+    {
+        <div class="flex justify-center items-center gap-2 mt-4 flex-wrap">
+            <a href="@Url.Action("Index", new { page = currentPage - 1, filtre = currentFiltre })"
+               class="px-4 py-2 text-sm rounded-lg @(currentPage == 1 ? "opacity-50 cursor-not-allowed pointer-events-none bg-white dark:bg-gray-800 text-text-secondary-light dark:text-text-secondary-dark" : "bg-white dark:bg-gray-800 text-text-light dark:text-text-dark hover:bg-gray-50 dark:hover:bg-gray-700/50")">
+                ‹ Önceki
+            </a>
+
+            @{
+                int startPage = Math.Max(1, currentPage - 2);
+                int endPage = Math.Min(totalPages, startPage + 4);
+            }
+
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <a href="@Url.Action("Index", new { page = i, filtre = currentFiltre })"
+                   class="px-4 py-2 text-sm rounded-lg @(i == currentPage ? "bg-primary text-white" : "bg-white dark:bg-gray-800 text-text-light dark:text-text-dark hover:bg-gray-50 dark:hover:bg-gray-700/50")">
+                    @i
+                </a>
+            }
+
+            <a href="@Url.Action("Index", new { page = currentPage + 1, filtre = currentFiltre })"
+               class="px-4 py-2 text-sm rounded-lg @(currentPage == totalPages ? "opacity-50 cursor-not-allowed pointer-events-none bg-white dark:bg-gray-800 text-text-secondary-light dark:text-text-secondary-dark" : "bg-white dark:bg-gray-800 text-text-light dark:text-text-dark hover:bg-gray-50 dark:hover:bg-gray-700/50")">
+                Sonraki ›
+            </a>
+        </div>
+    }
+</div>

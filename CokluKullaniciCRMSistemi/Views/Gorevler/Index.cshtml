@@ -1,0 +1,86 @@
+﻿@using CokluKullaniciCRMSistemi.Models.Entity
+@using PagedList
+@using PagedList.Mvc
+@model PagedList.IPagedList<Tasks>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Görev Yönetimi";
+}
+
+<div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+    <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">Görev Yönetimi</h1>
+    <a href="@Url.Action("YeniGorev", "Gorevler")"
+       class="flex items-center justify-center rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold shadow-sm hover:bg-primary/90 transition-colors">
+        <span class="material-symbols-outlined mr-2">add</span>
+        <span class="truncate">Yeni Görev Ekle</span>
+    </a>
+</div>
+
+@using (Html.BeginForm("Index", "Gorevler", FormMethod.Get))
+{
+    <div class="mb-6">
+        <label class="flex flex-col min-w-40 w-full">
+            <div class="flex w-full flex-1 items-stretch rounded-lg h-12">
+                <div class="text-gray-500 flex bg-white dark:bg-gray-800 items-center justify-center pl-4 rounded-l-lg border border-gray-200 dark:border-gray-700 border-r-0">
+                    <span class="material-symbols-outlined">search</span>
+                </div>
+                <input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 h-full placeholder:text-gray-500 px-4 text-base font-normal" placeholder="Görevler Başlığı veya Sorumlu Kişi Ara..."
+                       id="searchInput" name="p" value="@ViewBag.CurrentFilter" />
+            </div>
+        </label>
+    </div>
+}
+
+<div class="overflow-x-auto">
+    <div class="bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-800">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Görev Başlığı</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Açıklama</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Sorumlu Kişi</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Oluşturulma Tarihi</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Son Tarih</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Durum</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-gray-800/50 divide-y divide-gray-200 dark:divide-gray-700">
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="px-6 py-4">@item.Title</td>
+                        <td class="px-6 py-4">@item.Description</td>
+                        <td class="px-6 py-4">
+                            @(item.Users != null ? item.Users.FullName : "- (Kullanıcı Yok)")
+                        </td>
+                        <td class="px-6 py-4">@item.CreatedDate.ToString("dd/MM/yyyy")</td>
+                        <td class="px-6 py-4">@(item.DueDate?.ToString("dd.MM.yyyy"))</td>
+                        <td class="px-6 py-4">
+                            @{
+                                string statusText = item.IsCompleted ? "Tamamlandı" : "Devam Ediyor";
+                                string statusClasses = item.IsCompleted
+                                    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                    : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
+                            }
+                            <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full @statusClasses">
+                                @statusText
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-4">
+                                @Html.ActionLink("delete", "Sil", "Gorevler", new { id = item.TaskId }, new { @class = "text-red-600 hover:text-red-800 material-symbols-outlined text-base", onclick = "return confirm('Bu görevi silmek istediğinizden emin misiniz?')" })
+                                @Html.ActionLink("edit", "IdGetir", "Gorevler", new { id = item.TaskId }, new { @class = "text-primary hover:text-primary/80 material-symbols-outlined text-base" })
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="flex items-center justify-center mt-6">
+    @Html.PagedListPager((IPagedList)Model, sayfa => Url.Action("Index", new { sayfa, p = ViewBag.CurrentFilter }))
+</div>

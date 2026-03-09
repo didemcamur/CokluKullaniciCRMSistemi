@@ -1,0 +1,178 @@
+﻿@model CokluKullaniciCRMSistemi.Models.Entity.Tasks
+@{
+    Layout = null;
+}
+@{
+    var statusList = new List<SelectListItem>
+{
+        new SelectListItem { Text = "Devam Ediyor", Value = "False", Selected = !Model.IsCompleted },
+        new SelectListItem { Text = "Tamamlandı", Value = "True", Selected = Model.IsCompleted }
+    };
+}
+<!DOCTYPE html>
+<html class="light" lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Görevi Düzenle - CRM System</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0686ef",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#0f1a23",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#111518] dark:text-white/90">
+    <div class="relative flex min-h-screen w-full flex-col">
+        <main class="flex flex-1 justify-center py-8 px-4 sm:px-6 lg:px-8">
+            <div class="w-full max-w-3xl">
+                <div class="flex flex-wrap justify-between gap-4 items-center mb-6">
+                    <h1 class="text-[#111518] dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]">Görevi Düzenle</h1>
+                </div>
+                <div class="bg-white dark:bg-slate-900/70 p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+                    @using (Html.BeginForm("Guncelle", "Gorevler", FormMethod.Post))
+                    {
+                        @Html.HiddenFor(m => m.TaskId)
+                        <div class="flex flex-col mb-6">
+                            <label class="text-base font-medium leading-normal pb-2 text-slate-800 dark:text-slate-200" for="task-title">Görev Başlığı</label>
+                            @Html.TextBoxFor(m => m.Title, new { @class = "form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111518] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-primary dark:focus:border-primary h-12 placeholder:text-slate-400 dark:placeholder:text-slate-500 px-4 text-base font-normal leading-normal", @id = "task-title" })
+                            @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-red-500" })
+                        </div>
+                        <div class="flex flex-col mb-6">
+                            <label class="text-base font-medium leading-normal pb-2 text-slate-800 dark:text-slate-200" for="task-description">Açıklama</label>
+                            @Html.TextAreaFor(m => m.Description, new { @class = "form-textarea flex w-full min-w-0 flex-1 resize-y overflow-hidden rounded-lg text-[#111518] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-primary dark:focus:border-primary min-h-36 placeholder:text-slate-400 dark:placeholder:text-slate-500 p-4 text-base font-normal leading-normal", @id = "task-description" })
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+                            <div class="flex flex-col">
+                                <label class="text-base font-medium leading-normal pb-2 text-slate-800 dark:text-slate-200" for="creation-date">Oluşturulma Tarihi</label>
+                                <div class="relative flex w-full flex-1 items-stretch">
+                                    @Html.TextBoxFor(m => m.CreatedDate, "{0:yyyy-MM-dd}", new
+                                    {
+                                        @class = "form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-500 dark:text-slate-400 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary dark:focus:border-primary h-12 placeholder:text-slate-400 dark:placeholder:text-slate-500 px-4 text-base font-normal leading-normal pr-12 cursor-not-allowed",
+                                        @disabled = "disabled",
+                                        @id = "creation-date",
+                                        @type = "text"
+                                    })
+                                    <div class="absolute inset-y-0 right-0 text-slate-400 dark:text-slate-500 flex items-center justify-center pr-4 pointer-events-none">
+                                        <span class="material-symbols-outlined text-2xl">calendar_month</span>
+                                    </div>
+                                </div> <div class="h-5 mt-1"></div>
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="text-base font-medium leading-normal pb-2 text-slate-800 dark:text-slate-200" for="due-date">Son Tarih</label>
+                                <div class="relative flex w-full flex-1 items-stretch">
+                                    @Html.TextBoxFor(m => m.DueDate, "{0:dd-MM-yyyy}", new
+                               {
+                                   @class = "form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-500 dark:text-slate-400 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-primary dark:focus:border-primary h-12 placeholder:text-slate-400 dark:placeholder:text-slate-500 px-4 text-base font-normal leading-normal pr-12",
+                                   @id = "due-date",
+                                   @type = "text"
+                               })
+                                    <div class="absolute inset-y-0 right-0 text-slate-500 dark:text-slate-400 flex items-center justify-center pr-4 cursor-pointer"
+                                                              onclick="document.getElementById('due-date').focus()">
+                                        <span class="material-symbols-outlined text-2xl">calendar_today</span>
+                                    </div>
+                                </div>
+                                @Html.HiddenFor(m => m.CreatedDate)
+                                <div class="h-5 mt-1">
+                                    @Html.ValidationMessageFor(model => model.DueDate, "", new { @class = "text-red-500 text-sm font-medium mt-1" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col mb-6">
+                            <label class="text-base font-medium leading-normal pb-2 text-slate-800 dark:text-slate-200" for="status">Durum</label>
+                            <div class="relative">
+                                @Html.DropDownListFor(m => m.IsCompleted, statusList, new
+                                {
+                                    @class = "form-select appearance-none w-full min-w-0 flex-1 overflow-hidden rounded-lg text-[#111518] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-primary dark:focus:border-primary h-12 px-4 text-base font-normal leading-normal",
+                                    @id = "status"
+                                })
+                                <div class="absolute inset-y-0 right-0 text-slate-500 dark:text-slate-400 flex items-center pr-4 pointer-events-none">
+                                    <span class="material-symbols-outlined text-2xl">expand_more</span>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="flex flex-col mb-6">
+                            <label class="text-base font-medium leading-normal pb-2 text-slate-800 dark:text-slate-200" for="users">Kullanıcılar</label>
+                            <div class="relative">
+                                @Html.DropDownListFor(m => m.UserId, (List<SelectListItem>)ViewBag.UserList, new
+                                {
+                                    @class = "form-select appearance-none w-full min-w-0 flex-1 overflow-hidden rounded-lg text-[#111518] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-primary dark:focus:border-primary h-12 px-4 text-base font-normal leading-normal",
+                                    @id = "users"
+                                })
+                                <div class="absolute inset-y-0 right-0 text-slate-500 dark:text-slate-400 flex items-center pr-4 pointer-events-none">
+                                    <span class="material-symbols-outlined text-2xl">expand_more</span>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-4">
+                            <button class="flex w-full sm:w-auto cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-base font-bold leading-normal tracking-wide min-w-28 px-6 transition-colors" type="button">İptal</button>
+                            <button class="flex w-full sm:w-auto cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-primary text-white hover:bg-primary/90 text-base font-bold leading-normal tracking-wide min-w-28 px-6 transition-colors" type="submit">Kaydet</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </main>
+    </div>
+
+    @*Son Tarih için tablodan tarih seçme özelliği*@
+    <script>
+    $(document).ready(function () {
+        var createdDateString = document.getElementById('creation-date').value;
+        var dateParts = createdDateString.split('-'); // Yıl, Ay, Gün olarak ayır
+
+        var createdDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+
+        // Datepicker ayarlarını uyguluyoruz
+        $("#due-date").datepicker({
+            dateFormat: "dd-mm-yy",     // Kullanıcı arayüzünde görünen format
+            changeYear: true,           // Yıl seçimine izin verir
+            changeMonth: true,          // Ay seçimine izin verir
+            yearRange: "c-10:c+10",      // Mevcut yıldan 10 yıl öncesine ve sonrasına izin verir
+            showOn: "focus",
+            firstDay: 1,
+            altField: "#due-date",
+            altFormat: "dd-mm-yy",
+
+            minDate: createdDate
+        });
+        $('.pr-4.cursor-pointer').click(function () {
+            $('#due-date').datepicker('show');
+        });
+
+    });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,165 @@
+﻿@model CokluKullaniciCRMSistemi.Models.Entity.Notes
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Not Düzenle";
+}
+
+<!-- PageHeading -->
+<div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+    <div>
+        <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">Not Düzenle</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Notu güncelleyin</p>
+    </div>
+    <button onclick="window.location.href='/Notlar/Index'"
+            class="flex items-center justify-center rounded-lg h-10 px-5 bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200 text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+        <span class="material-symbols-outlined mr-2">arrow_back</span>
+        <span class="truncate">Geri Dön</span>
+    </button>
+</div>
+
+<!-- Form Card -->
+<div class="max-w-3xl mx-auto">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div class="p-6 bg-gradient-to-r from-purple-500 to-pink-600">
+            <div class="flex items-center gap-3 text-white">
+                <span class="material-symbols-outlined text-4xl">edit_note</span>
+                <div>
+                    <h2 class="text-xl font-bold">Not Düzenle</h2>
+                    <p class="text-sm opacity-90">Not bilgilerini güncelleyin</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Note Info Banner -->
+        <div class="px-6 py-4 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between text-sm">
+                <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                    <span class="material-symbols-outlined text-lg">schedule</span>
+                    <span>Oluşturulma: <strong>@Model.CreatedDate.ToString("dd MMM yyyy, HH:mm")</strong></span>
+                </div>
+                @if (Model.UpdatedDate != null)
+                {
+                    <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                        <span class="material-symbols-outlined text-lg">update</span>
+                        <span>Son Güncelleme: <strong>@Model.UpdatedDate.Value.ToString("dd MMM yyyy, HH:mm")</strong></span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <form method="post" action="/Notlar/Edit" class="p-6">
+            <input type="hidden" name="NoteId" value="@Model.NoteId" />
+
+            <div class="space-y-6">
+                <!-- Başlık -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <span class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-lg">title</span>
+                            Not Başlığı
+                            <span class="text-red-500">*</span>
+                        </span>
+                    </label>
+                    <input type="text" name="Title" value="@Model.Title" required
+                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-text-light dark:text-text-dark"
+                           placeholder="Örn: Proje Toplantı Notları" />
+                </div>
+
+                
+
+                <!-- Görev (Opsiyonel) -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <span class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-lg">task_alt</span>
+                            Bağlı Görev (Opsiyonel)
+                        </span>
+                    </label>
+                    <select name="TaskId"
+                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-text-light dark:text-text-dark">
+                        <option value="">Görev Seçin (İsteğe Bağlı)</option>
+                        @foreach (var task in ViewBag.Tasks)
+                        {
+                            <option value="@task.TaskId" @(task.TaskId == Model.TaskId ? "selected" : "")>@task.Title</option>
+                        }
+                    </select>
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Bu not bir göreve bağlanabilir (zorunlu değil)</p>
+                </div>
+
+                <!-- İçerik -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <span class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-lg">description</span>
+                            Not İçeriği
+                            <span class="text-red-500">*</span>
+                        </span>
+                    </label>
+                    <textarea name="Content" required rows="8"
+                              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-text-light dark:text-text-dark resize-none"
+                              placeholder="Not içeriğini buraya yazın...">@Model.Content</textarea>
+                    <div class="mt-2 flex items-center justify-between">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Detaylı not bilgilerini ekleyin</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400" id="charCount">@(Model.Content?.Length ?? 0) karakter</p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-4 pt-4">
+                    <button type="submit"
+                            class="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium shadow-sm">
+                        <span class="material-symbols-outlined">save</span>
+                        <span>Değişiklikleri Kaydet</span>
+                    </button>
+                    <button type="button" onclick="window.location.href='/Notlar/Index'"
+                            class="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">
+                        <span class="material-symbols-outlined">cancel</span>
+                        <span>İptal</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Warning Card -->
+    <div class="mt-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+        <div class="flex gap-3">
+            <span class="material-symbols-outlined text-yellow-600 dark:text-yellow-400">warning</span>
+            <div>
+                <h3 class="font-medium text-yellow-900 dark:text-yellow-300 mb-1">Dikkat</h3>
+                <p class="text-sm text-yellow-700 dark:text-yellow-400">
+                    Not bilgilerini güncelledikten sonra değişiklikler kalıcı olacaktır.
+                    Emin olmadığınız değişiklikler yapmadan önce iptal butonuna tıklayın.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Character counter
+    const contentTextarea = document.querySelector('textarea[name="Content"]');
+    const charCountElement = document.getElementById('charCount');
+
+    contentTextarea.addEventListener('input', function () {
+        charCountElement.textContent = this.value.length + ' karakter';
+    });
+
+    // Form validation
+    document.querySelector('form').addEventListener('submit', function (e) {
+        const title = document.querySelector('input[name="Title"]').value.trim();
+        const content = document.querySelector('textarea[name="Content"]').value.trim();
+        const userId = document.querySelector('select[name="UserId"]').value;
+
+        if (!title || !content || !userId) {
+            e.preventDefault();
+            alert('Lütfen tüm zorunlu alanları doldurun!');
+            return;
+        }
+
+        if (!confirm('Bu notu güncellemek istediğinizden emin misiniz?')) {
+            e.preventDefault();
+        }
+    });
+</script>
